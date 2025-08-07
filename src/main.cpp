@@ -8,30 +8,31 @@
 // Helper function to convert VkComponentTypeKHR to string
 std::string getComponentTypeString(VkComponentTypeKHR componentType) {
   switch (componentType) {
-    case VK_COMPONENT_TYPE_FLOAT16_KHR:
-      return "VK_COMPONENT_TYPE_FLOAT16";
-    case VK_COMPONENT_TYPE_FLOAT32_KHR:
-      return "VK_COMPONENT_TYPE_FLOAT32";
-    case VK_COMPONENT_TYPE_FLOAT64_KHR:
-      return "VK_COMPONENT_TYPE_FLOAT64";
-    case VK_COMPONENT_TYPE_SINT8_KHR:
-      return "VK_COMPONENT_TYPE_SINT8";
-    case VK_COMPONENT_TYPE_SINT16_KHR:
-      return "VK_COMPONENT_TYPE_SINT16";
-    case VK_COMPONENT_TYPE_SINT32_KHR:
-      return "VK_COMPONENT_TYPE_SINT32";
-    case VK_COMPONENT_TYPE_SINT64_KHR:
-      return "VK_COMPONENT_TYPE_SINT64";
-    case VK_COMPONENT_TYPE_UINT8_KHR:
-      return "VK_COMPONENT_TYPE_UINT8";
-    case VK_COMPONENT_TYPE_UINT16_KHR:
-      return "VK_COMPONENT_TYPE_UINT16";
-    case VK_COMPONENT_TYPE_UINT32_KHR:
-      return "VK_COMPONENT_TYPE_UINT32";
-    case VK_COMPONENT_TYPE_UINT64_KHR:
-      return "VK_COMPONENT_TYPE_UINT64";
-    default:
-      return "VK_COMPONENT_TYPE_UNKNOWN(" + std::to_string(static_cast<int>(componentType)) + ")";
+  case VK_COMPONENT_TYPE_FLOAT16_KHR:
+    return "VK_COMPONENT_TYPE_FLOAT16";
+  case VK_COMPONENT_TYPE_FLOAT32_KHR:
+    return "VK_COMPONENT_TYPE_FLOAT32";
+  case VK_COMPONENT_TYPE_FLOAT64_KHR:
+    return "VK_COMPONENT_TYPE_FLOAT64";
+  case VK_COMPONENT_TYPE_SINT8_KHR:
+    return "VK_COMPONENT_TYPE_SINT8";
+  case VK_COMPONENT_TYPE_SINT16_KHR:
+    return "VK_COMPONENT_TYPE_SINT16";
+  case VK_COMPONENT_TYPE_SINT32_KHR:
+    return "VK_COMPONENT_TYPE_SINT32";
+  case VK_COMPONENT_TYPE_SINT64_KHR:
+    return "VK_COMPONENT_TYPE_SINT64";
+  case VK_COMPONENT_TYPE_UINT8_KHR:
+    return "VK_COMPONENT_TYPE_UINT8";
+  case VK_COMPONENT_TYPE_UINT16_KHR:
+    return "VK_COMPONENT_TYPE_UINT16";
+  case VK_COMPONENT_TYPE_UINT32_KHR:
+    return "VK_COMPONENT_TYPE_UINT32";
+  case VK_COMPONENT_TYPE_UINT64_KHR:
+    return "VK_COMPONENT_TYPE_UINT64";
+  default:
+    return "VK_COMPONENT_TYPE_UNKNOWN(" +
+           std::to_string(static_cast<int>(componentType)) + ")";
   }
 }
 
@@ -61,7 +62,24 @@ std::string getComponentTypeStringNV(VkComponentTypeNV componentType) {
     case VK_COMPONENT_TYPE_UINT64_NV:
       return "VK_COMPONENT_TYPE_UINT64";
     default:
-      return "VK_COMPONENT_TYPE_UNKNOWN(" + std::to_string(static_cast<int>(componentType)) + ")";
+      return "VK_COMPONENT_TYPE_UNKNOWN(" +
+             std::to_string(static_cast<int>(componentType)) + ")";
+  }
+}
+
+// Helper function to convert VkScopeNV to string
+std::string getScopeString(VkScopeNV scope) {
+  switch (scope) {
+    case VK_SCOPE_DEVICE_NV:
+      return "VK_SCOPE_DEVICE_NV";
+    case VK_SCOPE_WORKGROUP_NV:
+      return "VK_SCOPE_WORKGROUP_NV";
+    case VK_SCOPE_SUBGROUP_NV:
+      return "VK_SCOPE_SUBGROUP_NV";
+    case VK_SCOPE_QUEUE_FAMILY_NV:
+      return "VK_SCOPE_QUEUE_FAMILY_NV";
+    default:
+      return "VK_SCOPE_UNKNOWN(" + std::to_string(static_cast<int>(scope)) + ")";
   }
 }
 
@@ -159,13 +177,19 @@ int main(int argc, char **argv) {
                     << prop.NSize << "x" << prop.KSize << "\n";
 
           // Data types
-          std::cout << "        A type: " << getComponentTypeString(prop.AType) << "\n";
-          std::cout << "        B type: " << getComponentTypeString(prop.BType) << "\n";
-          std::cout << "        C type: " << getComponentTypeString(prop.CType) << "\n";
-          std::cout << "        Result type: " << getComponentTypeString(prop.ResultType) << "\n";
+          std::cout << "        A type: " << getComponentTypeString(prop.AType)
+                    << "\n";
+          std::cout << "        B type: " << getComponentTypeString(prop.BType)
+                    << "\n";
+          std::cout << "        C type: " << getComponentTypeString(prop.CType)
+                    << "\n";
+          std::cout << "        Result type: "
+                    << getComponentTypeString(prop.ResultType) << "\n";
 
           // Acceleration properties
           std::cout << "        Saturating accumulation: "
+                    << (prop.saturatingAccumulation ? "Yes" : "No") << "\n";
+          std::cout << "        Accumulative: "
                     << (prop.saturatingAccumulation ? "Yes" : "No") << "\n";
           std::cout << "        Matrix size: " << prop.MSize << "x"
                     << prop.NSize << "x" << prop.KSize << "\n";
@@ -175,7 +199,7 @@ int main(int argc, char **argv) {
         std::cout << "  No cooperative matrix properties found\n";
       }
     }
-    
+
     // Query cooperative matrix properties if NVIDIA extension is supported
     if (nvFound) {
       uint32_t propertyCount = 0;
@@ -189,8 +213,8 @@ int main(int argc, char **argv) {
           prop.pNext = nullptr;
         }
 
-        vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(
-            device, &propertyCount, properties.data());
+        vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(device, &propertyCount,
+                                                         properties.data());
 
         std::cout << "  NVIDIA Cooperative Matrix Properties (" << propertyCount
                   << " supported):\n";
@@ -200,13 +224,19 @@ int main(int argc, char **argv) {
                     << prop.NSize << "x" << prop.KSize << "\n";
 
           // Data types
-          std::cout << "        A type: " << getComponentTypeStringNV(prop.AType) << "\n";
-          std::cout << "        B type: " << getComponentTypeStringNV(prop.BType) << "\n";
-          std::cout << "        C type: " << getComponentTypeStringNV(prop.CType) << "\n";
-          std::cout << "        D type: " << getComponentTypeStringNV(prop.DType) << "\n";
+          std::cout << "        A type: "
+                    << getComponentTypeStringNV(prop.AType) << "\n";
+          std::cout << "        B type: "
+                    << getComponentTypeStringNV(prop.BType) << "\n";
+          std::cout << "        C type: "
+                    << getComponentTypeStringNV(prop.CType) << "\n";
+          std::cout << "        D type: "
+                    << getComponentTypeStringNV(prop.DType) << "\n";
 
-          // Scope
-          std::cout << "        Scope: " << prop.scope << "\n";
+          // Scope and accumulation
+          std::cout << "        Scope: " << getScopeString(prop.scope) << "\n";
+          std::cout << "        Accumulative: "
+                    << (prop.scope == VK_SCOPE_DEVICE_NV ? "Yes (Device-wide)" : "No (Limited scope)") << "\n";
           std::cout << "\n";
         }
       } else {
