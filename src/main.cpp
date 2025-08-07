@@ -71,9 +71,9 @@ int main(int argc, char **argv) {
 
     std::cout << "Device: " << props.deviceName << "\n";
     std::cout << "  VK_KHR_cooperative_matrix: "
-              << (khrFound ? "Supported ✅" : "Not supported ❌") << "\n";
+              << (khrFound ? "Supported" : "Not supported") << "\n";
     std::cout << "  VK_NV_cooperative_matrix: "
-              << (nvFound ? "Supported ✅" : "Not supported ❌") << "\n";
+              << (nvFound ? "Supported" : "Not supported") << "\n";
   }
 
   vkDestroyInstance(instance, nullptr);
