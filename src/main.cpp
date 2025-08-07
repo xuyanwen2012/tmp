@@ -74,6 +74,47 @@ int main(int argc, char **argv) {
               << (khrFound ? "Supported" : "Not supported") << "\n";
     std::cout << "  VK_NV_cooperative_matrix: "
               << (nvFound ? "Supported" : "Not supported") << "\n";
+
+    // Query cooperative matrix properties if KHR extension is supported
+    if (khrFound) {
+      uint32_t propertyCount = 0;
+      vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(device, &propertyCount,
+                                                        nullptr);
+
+      if (propertyCount > 0) {
+        std::vector<VkCooperativeMatrixPropertiesKHR> properties(propertyCount);
+        for (auto &prop : properties) {
+          prop.sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_KHR;
+          prop.pNext = nullptr;
+        }
+
+        vkGetPhysicalDeviceCooperativeMatrixPropertiesKHR(
+            device, &propertyCount, properties.data());
+
+        std::cout << "  Cooperative Matrix Properties (" << propertyCount
+                  << " supported):\n";
+        for (size_t i = 0; i < properties.size(); ++i) {
+          const auto &prop = properties[i];
+          std::cout << "    [" << i << "] MxNxK: " << prop.MSize << "x"
+                    << prop.NSize << "x" << prop.KSize << "\n";
+
+          // Data types
+          std::cout << "        A type: " << prop.AType << "\n";
+          std::cout << "        B type: " << prop.BType << "\n";
+          std::cout << "        C type: " << prop.CType << "\n";
+          std::cout << "        Result type: " << prop.ResultType << "\n";
+
+          // Acceleration properties
+          std::cout << "        Saturating accumulation: "
+                    << (prop.saturatingAccumulation ? "Yes" : "No") << "\n";
+          std::cout << "        Matrix size: " << prop.MSize << "x"
+                    << prop.NSize << "x" << prop.KSize << "\n";
+          std::cout << "\n";
+        }
+      } else {
+        std::cout << "  No cooperative matrix properties found\n";
+      }
+    }
   }
 
   vkDestroyInstance(instance, nullptr);
